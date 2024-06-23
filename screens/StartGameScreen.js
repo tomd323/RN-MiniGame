@@ -1,4 +1,4 @@
-import { View, Pressable, TextInput, StyleSheet } from 'react-native';
+import { View, Pressable, TextInput, StyleSheet, } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 
 
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         borderRadius: 8,
         padding: 16,
-        backgroundColor: '#4e0027',
+        backgroundColor: '#36011c',
         elevation: 8, // shadow on Android 
         shadowColor: 'black', // shadow on iOS
         shadowOffset: { width: 0, height: 2 }, // shadow on iOS
