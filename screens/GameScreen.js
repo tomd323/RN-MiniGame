@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
+import colors from "../constants/colors";
+
 import Title from "../components/ui/Title";
 import NumberContainer from "../components/game/NumberContainer";
 import PrimaryButton from "../components/ui/PrimaryButton";
@@ -22,7 +24,7 @@ let minBoundary = 1;
 let maxBoundary = 100;
 
 
-function GameScreen({ userNumber, onGameOver }) {
+function GameScreen({ userNumber, onGameOver, roundNumber }) {
     const initialGuess = generateRandomBetween(1, 100, userNumber);
     const [currentGuess, setCurrentGuess] = useState(initialGuess);
     const [currentRound, setCurrentRound] = useState(0);
@@ -30,6 +32,7 @@ function GameScreen({ userNumber, onGameOver }) {
     useEffect(() => {
         if (currentGuess === userNumber) {
             onGameOver();
+            roundNumber(currentRound);
         }
     }, [currentGuess, userNumber, onGameOver]);
 
@@ -39,13 +42,10 @@ function GameScreen({ userNumber, onGameOver }) {
     }, []);
 
     function nextGuessHandler(direction) {
-
-
         if (direction === 'lower' && currentGuess < userNumber || direction === 'greater' && currentGuess > userNumber) {
             Alert.alert('Don\'t lie!', 'You know that this is wrong...', [{ text: 'Sorry!', style: 'cancel' }]);
             return;
         }
-
 
         if (direction === 'lower') {
             maxBoundary = currentGuess;
@@ -54,7 +54,7 @@ function GameScreen({ userNumber, onGameOver }) {
         }
         const newRndNumber = generateRandomBetween(minBoundary, maxBoundary, currentGuess);
         setCurrentGuess(newRndNumber);
-        setCurrentRound(prevGuessRounds => [newRndNumber, ...prevGuessRounds]);
+        setCurrentRound(currentRound + 1);
     }
 
     return (
@@ -77,7 +77,10 @@ function GameScreen({ userNumber, onGameOver }) {
                 </View>
             </Card>
             <View>
-                {currentRound.map(round => <Text key={round}>{round}</Text>)}
+                <Text style={styles.summaryText}>
+                    Round:
+                    <Text style={styles.Highlight}>{currentRound}</Text>
+                </Text>
             </View>
         </View>
     );
@@ -101,5 +104,17 @@ const styles = StyleSheet.create({
 
     instructionText: {
         marginBottom: 16,
+    },
+
+    summaryText: {
+        fontFamily: 'open-sans',
+        fontSize: 24,
+        color: colors.secondary500,
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    Highlight: {
+        color: colors.primary500,
+        fontFamily: 'open-sans-bold',
     },
 });
