@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet } from "react-native";
+import { Text, View, Image, StyleSheet, Platform, Dimensions } from "react-native";
 import Title from "../components/ui/Title";
 import colors from "../constants/colors";
 import PrimaryButton from "../components/ui/PrimaryButton";
@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 24,
         alignItems: 'center',
-        justifyContent: 'center',
+        // example of platform specific style
+        justifyContent: Platform.select({ ios: 'center', android: 'center' }),
     },
     // Style for the image container
     imageContainer: {
