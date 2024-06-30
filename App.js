@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState, useCallback } from 'react';
-import { StyleSheet, Text, View, ImageBackground, SafeAreaView, Platform, Dimensions } from 'react-native';
+import { useState, useCallback, useEffect } from 'react';
+import { StyleSheet, View, ImageBackground, SafeAreaView } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -10,6 +10,7 @@ import colors from './constants/colors';
 import StartGameScreen from './screens/StartGameScreen';
 import GameScreen from './screens/GameScreen';
 import GameOverScreen from './screens/GameOverScreen';
+import BottomNavBar from './components/ui/BottomNavBar';
 
 // Prevents the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -19,6 +20,7 @@ export default function App() {
   const [userNumber, setUserNumber] = useState();
   const [gameIsOver, setGameIsOver] = useState(true);
   const [guessRounds, setGuessRounds] = useState(0);
+  const [selectedTab, setSelectedTab] = useState('Play');
 
   // Load custom fonts
   const [fontsLoaded] = useFonts({
@@ -30,6 +32,12 @@ export default function App() {
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
@@ -61,20 +69,24 @@ export default function App() {
   }
 
   // Determine which screen to display
-  let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />
+  let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
 
   if (userNumber) {
-    screen = <GameScreen onGameOver={gameOverHandler} userNumber={userNumber} roundNumber={getRoundNumber} />
+    screen = <GameScreen onGameOver={gameOverHandler} userNumber={userNumber} roundNumber={getRoundNumber} />;
   }
 
   if (gameIsOver && userNumber) {
-    screen = <GameOverScreen rounds={guessRounds} userNumber={userNumber} onStartNewGame={startNewGameHandler} />
+    screen = <GameOverScreen rounds={guessRounds} userNumber={userNumber} onStartNewGame={startNewGameHandler} />;
+  }
+
+  // Handler for tab press events
+  function handleTabPress(tab) {
+    setSelectedTab(tab);
   }
 
   return (
     <>
       <StatusBar style='light' />
-      {/* // LinearGradient background with the splash screen hide callback */}
       <LinearGradient onLayout={onLayoutRootView} colors={[colors.primary700, colors.secondary600]} style={styles.rootScreen}>
         <ImageBackground
           style={styles.rootScreen}
@@ -82,7 +94,10 @@ export default function App() {
           resizeMode='cover'
           imageStyle={styles.backgroundImage}
         >
-          <SafeAreaView style={styles.rootScreen}>{screen}</SafeAreaView>
+          <SafeAreaView style={styles.rootScreen}>
+            {screen}
+            <BottomNavBar onTabPress={handleTabPress} />
+          </SafeAreaView>
         </ImageBackground>
       </LinearGradient>
     </>
@@ -92,8 +107,8 @@ export default function App() {
 const styles = StyleSheet.create({
   rootScreen: {
     flex: 1,
+    justifyContent: 'space-between',
   },
-
   backgroundImage: {
     opacity: 0.15,
   },
