@@ -110,8 +110,8 @@ export default function App() {
         >
           <SafeAreaView style={styles.rootScreen}>
             {screen}
-            <BottomNavBar onTabPress={handleTabPress} />
           </SafeAreaView>
+          <BottomNavBar onTabPress={handleTabPress} />
         </ImageBackground>
       </LinearGradient>
     </>
