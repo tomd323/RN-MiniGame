@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, View, ImageBackground, SafeAreaView } from 'react-native';
+import { StyleSheet, View, ImageBackground, SafeAreaView, Text } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -11,6 +11,7 @@ import StartGameScreen from './screens/StartGameScreen';
 import GameScreen from './screens/GameScreen';
 import GameOverScreen from './screens/GameOverScreen';
 import BottomNavBar from './components/ui/BottomNavBar';
+import ScoreboardScreen from './screens/ScoreBoardScreen';
 
 // Prevents the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -68,20 +69,33 @@ export default function App() {
     setGuessRounds(rounds);
   }
 
-  // Determine which screen to display
-  let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
-
-  if (userNumber) {
-    screen = <GameScreen onGameOver={gameOverHandler} userNumber={userNumber} roundNumber={getRoundNumber} />;
-  }
-
-  if (gameIsOver && userNumber) {
-    screen = <GameOverScreen rounds={guessRounds} userNumber={userNumber} onStartNewGame={startNewGameHandler} />;
-  }
-
   // Handler for tab press events
   function handleTabPress(tab) {
     setSelectedTab(tab);
+    console.log('Selected tab:', tab);
+  }
+
+  // Determine which screen to display based on selected tab
+  let screen;
+  switch (selectedTab) {
+    case 'Play':
+      screen = (
+        userNumber
+          ? (gameIsOver ? <GameOverScreen rounds={guessRounds} userNumber={userNumber} onStartNewGame={startNewGameHandler} /> : <GameScreen onGameOver={gameOverHandler} userNumber={userNumber} roundNumber={getRoundNumber} />)
+          : <StartGameScreen onPickNumber={pickedNumberHandler} />
+      );
+      break;
+    case 'Scoreboard':
+      screen = <ScoreboardScreen />;
+      break;
+    case 'Friends':
+      screen = <View style={styles.screen}><Text>Friends Screen</Text></View>;
+      break;
+    case 'Profile':
+      screen = <View style={styles.screen}><Text>Profile Screen</Text></View>;
+      break;
+    default:
+      screen = <View style={styles.screen}><Text>Default Screen</Text></View>;
   }
 
   return (
@@ -112,4 +126,9 @@ const styles = StyleSheet.create({
   backgroundImage: {
     opacity: 0.15,
   },
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
