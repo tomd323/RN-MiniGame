@@ -42,6 +42,7 @@ function ScoreboardScreen() {
                         </View>
                     </Card>
                 )}
+                contentContainerStyle={{ paddingBottom: 50 }} // Ensure enough padding at the bottom
             />
         </View>
     );
